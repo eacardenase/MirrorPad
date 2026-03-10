@@ -30,30 +30,195 @@ import UIKit
 
 public class ViewController: UIViewController {
 
-  // MARK: - Outlets
-  @IBOutlet public var drawViewContainer: UIView!
-  @IBOutlet public var inputDrawView: DrawView!
-  @IBOutlet public var mirrorDrawViews: [DrawView]!
+  // MARK: - Properties
+  public var drawViewContainer = UIView()
+  public let inputDrawView = DrawView()
+  public let topRightDrawView = DrawView()
+  public let bottomLeftDrawView = DrawView()
+  public let bottomRightDrawView = DrawView()
+  public let horizontalDivider: UIView = {
+    let view = UIView()
+
+    view.translatesAutoresizingMaskIntoConstraints = false
+    view.backgroundColor = .systemBlue
+
+    return view
+  }()
+  public let verticalDivider: UIView = {
+    let view = UIView()
+
+    view.translatesAutoresizingMaskIntoConstraints = false
+    view.backgroundColor = .systemBlue
+
+    return view
+  }()
+
+  public lazy var mirrorDrawViews = [
+    topRightDrawView, bottomLeftDrawView, bottomRightDrawView,
+  ]
 
   // MARK: - View Lifecycle
 
   public override func viewDidLoad() {
     super.viewDidLoad()
 
-    view.backgroundColor = .systemPink
+    setupViews()
   }
 
   // MARK: - Actions
-  @IBAction public func animatePressed(_ sender: Any) {
-    inputDrawView.animate()
+  @objc public func animatePressed(_ sender: Any) {
+    print(#function)
+    //    inputDrawView.animate()
   }
 
-  @IBAction public func clearPressed(_ sender: Any) {
-    inputDrawView.clear()
-    mirrorDrawViews.forEach { $0.clear() }
+  @objc public func clearPressed(_ sender: Any) {
+    print(#function)
+    //    inputDrawView.clear()
+    //    mirrorDrawViews.forEach { $0.clear() }
   }
 
-  @IBAction public func sharePressed(_ sender: Any) {
-
+  @objc public func sharePressed(_ sender: Any) {
+    print(#function)
   }
+}
+
+// MARK: - Helpers
+
+extension ViewController {
+
+  private func setupViews() {
+    view.backgroundColor = .systemBackground
+
+    drawViewContainer.translatesAutoresizingMaskIntoConstraints = false
+    inputDrawView.translatesAutoresizingMaskIntoConstraints = false
+    topRightDrawView.translatesAutoresizingMaskIntoConstraints = false
+    bottomLeftDrawView.translatesAutoresizingMaskIntoConstraints = false
+    bottomRightDrawView.translatesAutoresizingMaskIntoConstraints = false
+
+    view.addSubview(drawViewContainer)
+    view.addSubview(horizontalDivider)
+    view.addSubview(verticalDivider)
+
+    drawViewContainer.addSubview(inputDrawView)
+    drawViewContainer.addSubview(topRightDrawView)
+    drawViewContainer.addSubview(bottomLeftDrawView)
+    drawViewContainer.addSubview(bottomRightDrawView)
+
+    // drawViewContainer
+    NSLayoutConstraint.activate([
+      drawViewContainer.topAnchor.constraint(
+        equalTo: view.safeAreaLayoutGuide.topAnchor
+      ),
+      drawViewContainer.leadingAnchor.constraint(
+        equalTo: view.safeAreaLayoutGuide.leadingAnchor
+      ),
+      drawViewContainer.trailingAnchor.constraint(
+        equalTo: view.safeAreaLayoutGuide.trailingAnchor
+      ),
+      drawViewContainer.bottomAnchor.constraint(
+        equalTo: view.safeAreaLayoutGuide.bottomAnchor
+      ),
+
+    ])
+
+    // inputDrawView
+    NSLayoutConstraint.activate([
+      inputDrawView.topAnchor.constraint(equalTo: drawViewContainer.topAnchor),
+      inputDrawView.leadingAnchor.constraint(
+        equalTo: drawViewContainer.leadingAnchor
+      ),
+      inputDrawView.widthAnchor.constraint(
+        equalTo: topRightDrawView.widthAnchor
+      ),
+      inputDrawView.heightAnchor.constraint(
+        equalTo: bottomLeftDrawView.heightAnchor
+      ),
+    ])
+
+    // topRightDrawView
+    NSLayoutConstraint.activate([
+      topRightDrawView.topAnchor.constraint(
+        equalTo: inputDrawView.topAnchor
+      ),
+      topRightDrawView.leadingAnchor.constraint(
+        equalTo: inputDrawView.trailingAnchor
+      ),
+      topRightDrawView.trailingAnchor.constraint(
+        equalTo: drawViewContainer.trailingAnchor
+      ),
+      topRightDrawView.widthAnchor.constraint(
+        equalTo: inputDrawView.widthAnchor
+      ),
+    ])
+
+    // bottomLeftDrawView
+    NSLayoutConstraint.activate([
+      bottomLeftDrawView.topAnchor.constraint(
+        equalTo: inputDrawView.bottomAnchor
+      ),
+      bottomLeftDrawView.leadingAnchor.constraint(
+        equalTo: drawViewContainer.leadingAnchor
+      ),
+      bottomLeftDrawView.bottomAnchor.constraint(
+        equalTo: drawViewContainer.bottomAnchor
+      ),
+      bottomLeftDrawView.widthAnchor.constraint(
+        equalTo: bottomRightDrawView.widthAnchor
+      ),
+      bottomLeftDrawView.heightAnchor.constraint(
+        equalTo: inputDrawView.heightAnchor
+      ),
+    ])
+
+    // bottomRightDrawView
+    NSLayoutConstraint.activate([
+      bottomLeftDrawView.topAnchor.constraint(
+        equalTo: topRightDrawView.bottomAnchor
+      ),
+      bottomRightDrawView.leadingAnchor.constraint(
+        equalTo: bottomLeftDrawView.trailingAnchor
+      ),
+      bottomRightDrawView.trailingAnchor.constraint(
+        equalTo: drawViewContainer.trailingAnchor
+      ),
+      bottomRightDrawView.bottomAnchor.constraint(
+        equalTo: drawViewContainer.bottomAnchor
+      ),
+      bottomRightDrawView.heightAnchor.constraint(
+        equalTo: bottomLeftDrawView.heightAnchor
+      ),
+      bottomRightDrawView.widthAnchor.constraint(
+        equalTo: bottomLeftDrawView.widthAnchor
+      ),
+    ])
+
+    // horizontalDivider
+    NSLayoutConstraint.activate([
+      horizontalDivider.centerYAnchor.constraint(
+        equalTo: view.safeAreaLayoutGuide.centerYAnchor
+      ),
+      horizontalDivider.leadingAnchor.constraint(
+        equalTo: view.safeAreaLayoutGuide.leadingAnchor
+      ),
+      horizontalDivider.trailingAnchor.constraint(
+        equalTo: view.safeAreaLayoutGuide.trailingAnchor
+      ),
+      horizontalDivider.heightAnchor.constraint(equalToConstant: 2),
+    ])
+
+    // verticalDivider
+    NSLayoutConstraint.activate([
+      verticalDivider.centerXAnchor.constraint(
+        equalTo: view.centerXAnchor
+      ),
+      verticalDivider.topAnchor.constraint(
+        equalTo: view.safeAreaLayoutGuide.topAnchor
+      ),
+      verticalDivider.bottomAnchor.constraint(
+        equalTo: view.safeAreaLayoutGuide.bottomAnchor
+      ),
+      verticalDivider.widthAnchor.constraint(equalToConstant: 2),
+    ])
+  }
+
 }
