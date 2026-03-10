@@ -31,6 +31,7 @@ import UIKit
 public class ViewController: UIViewController {
 
   // MARK: - Properties
+
   public var drawViewContainer = UIView()
   public let inputDrawView = DrawView()
   public let topRightDrawView = DrawView()
@@ -41,6 +42,7 @@ public class ViewController: UIViewController {
 
     view.translatesAutoresizingMaskIntoConstraints = false
     view.backgroundColor = .systemBlue
+    view.alpha = 0.25
 
     return view
   }()
@@ -49,9 +51,33 @@ public class ViewController: UIViewController {
 
     view.translatesAutoresizingMaskIntoConstraints = false
     view.backgroundColor = .systemBlue
+    view.alpha = 0.25
 
     return view
   }()
+
+  let spacerButton = UIBarButtonItem(systemItem: .flexibleSpace)
+
+  public lazy var shareButton = UIBarButtonItem(
+    title: "Share",
+    style: .plain,
+    target: self,
+    action: #selector(sharePressed)
+  )
+
+  public lazy var clearButton = UIBarButtonItem(
+    title: "Clear",
+    style: .plain,
+    target: self,
+    action: #selector(clearPressed)
+  )
+
+  public lazy var animateButton = UIBarButtonItem(
+    title: "Animate",
+    style: .plain,
+    target: self,
+    action: #selector(animatePressed)
+  )
 
   public lazy var mirrorDrawViews = [
     topRightDrawView, bottomLeftDrawView, bottomRightDrawView,
@@ -62,22 +88,33 @@ public class ViewController: UIViewController {
   public override func viewDidLoad() {
     super.viewDidLoad()
 
+    navigationController?.navigationBar.isHidden = true
+    navigationController?.isToolbarHidden = false
+
     setupViews()
+
+    toolbarItems = [
+      shareButton,
+      spacerButton,
+      clearButton,
+      spacerButton,
+      animateButton,
+    ]
+
   }
 
   // MARK: - Actions
-  @objc public func animatePressed(_ sender: Any) {
-    print(#function)
-    //    inputDrawView.animate()
+
+  @objc public func animatePressed(_ sender: UIBarButtonItem) {
+    inputDrawView.animate()
   }
 
-  @objc public func clearPressed(_ sender: Any) {
-    print(#function)
-    //    inputDrawView.clear()
-    //    mirrorDrawViews.forEach { $0.clear() }
+  @objc public func clearPressed(_ sender: UIBarButtonItem) {
+    inputDrawView.clear()
+    mirrorDrawViews.forEach { $0.clear() }
   }
 
-  @objc public func sharePressed(_ sender: Any) {
+  @objc public func sharePressed(_ sender: UIBarButtonItem) {
     print(#function)
   }
 }
