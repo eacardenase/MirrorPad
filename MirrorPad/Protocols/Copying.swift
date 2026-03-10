@@ -1,4 +1,4 @@
-/// Copyright (c) 2019 Razeware LLC
+/// Copyright (c) 2026 Razeware LLC
 ///
 /// Permission is hereby granted, free of charge, to any person obtaining a copy
 /// of this software and associated documentation files (the "Software"), to deal
@@ -26,47 +26,20 @@
 /// OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 /// THE SOFTWARE.
 
-import UIKit
+import Foundation
 
-public class LineShape: CAShapeLayer, Copying {
-  // MARK: - Instance Properties
-  private let bezierPath: UIBezierPath
+public protocol Copying {
+  init(_ prototype: Self)
+}
 
-  // MARK: - Object Lifecycle
-  public init(color: UIColor, width: CGFloat, startPoint: CGPoint) {
-    bezierPath = UIBezierPath()
-    bezierPath.move(to: startPoint)
-    super.init()
-
-    fillColor = nil
-    lineWidth = width
-    path = bezierPath.cgPath
-    strokeColor = color.cgColor
+extension Copying {
+  func copy() -> Self {
+    return type(of: self).init(self)
   }
+}
 
-  public override convenience init(layer: Any) {
-    let lineShape = layer as! LineShape
-
-    self.init(lineShape)
-  }
-
-  public required init(_ prototype: LineShape) {
-    bezierPath = prototype.bezierPath.copy() as! UIBezierPath
-    super.init(layer: prototype)
-
-    fillColor = nil
-    lineWidth = prototype.lineWidth
-    path = bezierPath.cgPath
-    strokeColor = prototype.strokeColor
-  }
-
-  public required init?(coder aDecoder: NSCoder) {
-    fatalError("init(coder:) is not supported")
-  }
-
-  // MARK: - Instance Methods
-  public func addPoint(_ point: CGPoint) {
-    bezierPath.addLine(to: point)
-    path = bezierPath.cgPath
+extension Array where Element: Copying {
+  public func deepCopy() -> [Element] {
+    return map { $0.copy() }
   }
 }

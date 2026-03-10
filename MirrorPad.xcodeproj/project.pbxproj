@@ -17,6 +17,7 @@
 				/Localized/Views/LaunchScreen.storyboard,
 				AppDelegate/AppDelegate.swift,
 				Controllers/ViewController.swift,
+				Protocols/Copying.swift,
 				Resources/Assets.xcassets,
 				Views/DrawView.swift,
 				Views/LineShape.swift,

@@ -35,10 +35,10 @@ public class DrawView: UIView {
   public var lineWidth: CGFloat = 5.0
   public var lines: [LineShape] = []
 
-  @IBInspectable public var scaleX: CGFloat = 1 {
+  public var scaleX: CGFloat = 1 {
     didSet { applyTransform() }
   }
-  @IBInspectable public var scaleY: CGFloat = 1 {
+  public var scaleY: CGFloat = 1 {
     didSet { applyTransform() }
   }
   private func applyTransform() {
@@ -108,4 +108,12 @@ public class DrawView: UIView {
     lines = []
     layer.sublayers?.removeAll()
   }
+
+  public func copyLines(from source: DrawView) {
+    layer.sublayers?.removeAll()
+
+    lines = source.lines.deepCopy()
+    lines.forEach { layer.addSublayer($0) }
+  }
+  
 }

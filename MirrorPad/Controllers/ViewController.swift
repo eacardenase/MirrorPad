@@ -106,6 +106,9 @@ public class ViewController: UIViewController {
   // MARK: - Actions
 
   @objc public func animatePressed(_ sender: UIBarButtonItem) {
+    mirrorDrawViews.forEach { $0.copyLines(from: inputDrawView) }
+    mirrorDrawViews.forEach { $0.animate() }
+
     inputDrawView.animate()
   }
 
