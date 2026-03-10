@@ -31,20 +31,32 @@ import UIKit
 public class DrawView: UIView {
 
   // MARK: - Instance Properties
+  public let scaleX: CGFloat
+  public var scaleY: CGFloat
+
   public var lineColor: UIColor = .black
   public var lineWidth: CGFloat = 5.0
   public var lines: [LineShape] = []
 
-  public var scaleX: CGFloat = 1 {
-    didSet { applyTransform() }
-  }
-  public var scaleY: CGFloat = 1 {
-    didSet { applyTransform() }
-  }
   private func applyTransform() {
     layer.sublayerTransform = CATransform3DMakeScale(scaleX, scaleY, 1)
   }
 
+  // MARK: - Object Lifecycle
+
+  public init(scaleX: CGFloat, scaleY: CGFloat) {
+    self.scaleX = scaleX
+    self.scaleY = scaleY
+
+    super.init(frame: .zero)
+
+    applyTransform()
+  }
+  
+  required init?(coder: NSCoder) {
+    fatalError("init(coder:) has not been implemented")
+  }
+  
   // MARK: - UIResponder
   public override func touchesBegan(_ touches: Set<UITouch>, with event: UIEvent?) {
     guard let point = touches.first?.location(in: self) else { return }

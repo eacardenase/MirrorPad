@@ -33,10 +33,10 @@ public class ViewController: UIViewController {
   // MARK: - Properties
 
   public var drawViewContainer = UIView()
-  public let inputDrawView = DrawView()
-  public let topRightDrawView = DrawView()
-  public let bottomLeftDrawView = DrawView()
-  public let bottomRightDrawView = DrawView()
+  public let inputDrawView = DrawView(scaleX: 1, scaleY: 1)
+  public let topRightDrawView = DrawView(scaleX: -1, scaleY: 1)
+  public let bottomLeftDrawView = DrawView(scaleX: 1, scaleY: -1)
+  public let bottomRightDrawView = DrawView(scaleX: -1, scaleY: -1)
   public let horizontalDivider: UIView = {
     let view = UIView()
 
