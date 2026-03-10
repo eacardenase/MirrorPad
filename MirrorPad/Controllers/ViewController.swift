@@ -32,7 +32,6 @@ public class ViewController: UIViewController {
 
   // MARK: - Properties
 
-  public var drawViewContainer = UIView()
   public let inputDrawView = DrawView(scaleX: 1, scaleY: 1)
   public let topRightDrawView = DrawView(scaleX: -1, scaleY: 1)
   public let bottomLeftDrawView = DrawView(scaleX: 1, scaleY: -1)
@@ -129,107 +128,51 @@ extension ViewController {
   private func setupViews() {
     view.backgroundColor = .systemBackground
 
-    drawViewContainer.translatesAutoresizingMaskIntoConstraints = false
-    inputDrawView.translatesAutoresizingMaskIntoConstraints = false
-    topRightDrawView.translatesAutoresizingMaskIntoConstraints = false
-    bottomLeftDrawView.translatesAutoresizingMaskIntoConstraints = false
-    bottomRightDrawView.translatesAutoresizingMaskIntoConstraints = false
+    let topStackView = UIStackView(arrangedSubviews: [
+      inputDrawView, topRightDrawView,
+    ])
 
-    view.addSubview(drawViewContainer)
+    topStackView.translatesAutoresizingMaskIntoConstraints = false
+    topStackView.axis = .horizontal
+    topStackView.distribution = .fillEqually
+
+    let bottomStackView = UIStackView(arrangedSubviews: [
+      bottomLeftDrawView, bottomRightDrawView,
+    ])
+
+    bottomStackView.translatesAutoresizingMaskIntoConstraints = false
+    bottomStackView.axis = .horizontal
+    bottomStackView.distribution = .fillEqually
+
+    let containerStackView = UIStackView(arrangedSubviews: [
+      topStackView, bottomStackView,
+    ])
+
+    containerStackView.translatesAutoresizingMaskIntoConstraints = false
+    containerStackView.axis = .vertical
+    containerStackView.distribution = .fillEqually
+
+    view.addSubview(containerStackView)
     view.addSubview(horizontalDivider)
     view.addSubview(verticalDivider)
 
-    drawViewContainer.addSubview(inputDrawView)
-    drawViewContainer.addSubview(topRightDrawView)
-    drawViewContainer.addSubview(bottomLeftDrawView)
-    drawViewContainer.addSubview(bottomRightDrawView)
+    // containerStackView
+    let containerStackBottomAnchor = containerStackView.bottomAnchor.constraint(
+      equalTo: view.safeAreaLayoutGuide.bottomAnchor
+    )
+    containerStackBottomAnchor.priority = UILayoutPriority(900)
 
-    // drawViewContainer
     NSLayoutConstraint.activate([
-      drawViewContainer.topAnchor.constraint(
+      containerStackView.topAnchor.constraint(
         equalTo: view.safeAreaLayoutGuide.topAnchor
       ),
-      drawViewContainer.leadingAnchor.constraint(
+      containerStackView.leadingAnchor.constraint(
         equalTo: view.safeAreaLayoutGuide.leadingAnchor
       ),
-      drawViewContainer.trailingAnchor.constraint(
+      containerStackView.trailingAnchor.constraint(
         equalTo: view.safeAreaLayoutGuide.trailingAnchor
       ),
-      drawViewContainer.bottomAnchor.constraint(
-        equalTo: view.safeAreaLayoutGuide.bottomAnchor
-      ),
-
-    ])
-
-    // inputDrawView
-    NSLayoutConstraint.activate([
-      inputDrawView.topAnchor.constraint(equalTo: drawViewContainer.topAnchor),
-      inputDrawView.leadingAnchor.constraint(
-        equalTo: drawViewContainer.leadingAnchor
-      ),
-      inputDrawView.widthAnchor.constraint(
-        equalTo: topRightDrawView.widthAnchor
-      ),
-      inputDrawView.heightAnchor.constraint(
-        equalTo: bottomLeftDrawView.heightAnchor
-      ),
-    ])
-
-    // topRightDrawView
-    NSLayoutConstraint.activate([
-      topRightDrawView.topAnchor.constraint(
-        equalTo: inputDrawView.topAnchor
-      ),
-      topRightDrawView.leadingAnchor.constraint(
-        equalTo: inputDrawView.trailingAnchor
-      ),
-      topRightDrawView.trailingAnchor.constraint(
-        equalTo: drawViewContainer.trailingAnchor
-      ),
-      topRightDrawView.widthAnchor.constraint(
-        equalTo: inputDrawView.widthAnchor
-      ),
-    ])
-
-    // bottomLeftDrawView
-    NSLayoutConstraint.activate([
-      bottomLeftDrawView.topAnchor.constraint(
-        equalTo: inputDrawView.bottomAnchor
-      ),
-      bottomLeftDrawView.leadingAnchor.constraint(
-        equalTo: drawViewContainer.leadingAnchor
-      ),
-      bottomLeftDrawView.bottomAnchor.constraint(
-        equalTo: drawViewContainer.bottomAnchor
-      ),
-      bottomLeftDrawView.widthAnchor.constraint(
-        equalTo: bottomRightDrawView.widthAnchor
-      ),
-      bottomLeftDrawView.heightAnchor.constraint(
-        equalTo: inputDrawView.heightAnchor
-      ),
-    ])
-
-    // bottomRightDrawView
-    NSLayoutConstraint.activate([
-      bottomLeftDrawView.topAnchor.constraint(
-        equalTo: topRightDrawView.bottomAnchor
-      ),
-      bottomRightDrawView.leadingAnchor.constraint(
-        equalTo: bottomLeftDrawView.trailingAnchor
-      ),
-      bottomRightDrawView.trailingAnchor.constraint(
-        equalTo: drawViewContainer.trailingAnchor
-      ),
-      bottomRightDrawView.bottomAnchor.constraint(
-        equalTo: drawViewContainer.bottomAnchor
-      ),
-      bottomRightDrawView.heightAnchor.constraint(
-        equalTo: bottomLeftDrawView.heightAnchor
-      ),
-      bottomRightDrawView.widthAnchor.constraint(
-        equalTo: bottomLeftDrawView.widthAnchor
-      ),
+      containerStackBottomAnchor
     ])
 
     // horizontalDivider
@@ -238,10 +181,10 @@ extension ViewController {
         equalTo: view.safeAreaLayoutGuide.centerYAnchor
       ),
       horizontalDivider.leadingAnchor.constraint(
-        equalTo: view.safeAreaLayoutGuide.leadingAnchor
+        equalTo: containerStackView.leadingAnchor
       ),
       horizontalDivider.trailingAnchor.constraint(
-        equalTo: view.safeAreaLayoutGuide.trailingAnchor
+        equalTo: containerStackView.trailingAnchor
       ),
       horizontalDivider.heightAnchor.constraint(equalToConstant: 2),
     ])
@@ -252,10 +195,10 @@ extension ViewController {
         equalTo: view.centerXAnchor
       ),
       verticalDivider.topAnchor.constraint(
-        equalTo: view.safeAreaLayoutGuide.topAnchor
+        equalTo: containerStackView.topAnchor
       ),
       verticalDivider.bottomAnchor.constraint(
-        equalTo: view.safeAreaLayoutGuide.bottomAnchor
+        equalTo: containerStackView.bottomAnchor
       ),
       verticalDivider.widthAnchor.constraint(equalToConstant: 2),
     ])
