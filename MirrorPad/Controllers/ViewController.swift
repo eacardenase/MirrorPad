@@ -35,6 +35,14 @@ public class ViewController: UIViewController {
   @IBOutlet public var inputDrawView: DrawView!
   @IBOutlet public var mirrorDrawViews: [DrawView]!
 
+  // MARK: - View Lifecycle
+
+  public override func viewDidLoad() {
+    super.viewDidLoad()
+
+    view.backgroundColor = .systemPink
+  }
+
   // MARK: - Actions
   @IBAction public func animatePressed(_ sender: Any) {
     inputDrawView.animate()

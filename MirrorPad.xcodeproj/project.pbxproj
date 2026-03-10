@@ -3,7 +3,7 @@
 	archiveVersion = 1;
 	classes = {
 	};
-	objectVersion = 70;
+	objectVersion = 76;
 	objects = {
 
 /* Begin PBXFileReference section */
@@ -11,22 +11,22 @@
 /* End PBXFileReference section */
 
 /* Begin PBXFileSystemSynchronizedBuildFileExceptionSet section */
-		A5F71EE62F60459D000185C5 /* PBXFileSystemSynchronizedBuildFileExceptionSet */ = {
+		A5F71F2E2F604713000185C5 /* PBXFileSystemSynchronizedBuildFileExceptionSet */ = {
 			isa = PBXFileSystemSynchronizedBuildFileExceptionSet;
 			membershipExceptions = (
-				Assets.xcassets,
+				/Localized/Views/LaunchScreen.storyboard,
+				AppDelegate/AppDelegate.swift,
+				Controllers/ViewController.swift,
+				Resources/Assets.xcassets,
+				Views/DrawView.swift,
+				Views/LineShape.swift,
 			);
 			target = 42F35C3120449C9A00584FAD /* MirrorPad */;
 		};
 /* End PBXFileSystemSynchronizedBuildFileExceptionSet section */
 
 /* Begin PBXFileSystemSynchronizedRootGroup section */
-		A5F71EDD2F60458D000185C5 /* AppDelegate */ = {isa = PBXFileSystemSynchronizedRootGroup; explicitFileTypes = {}; explicitFolders = (); path = AppDelegate; sourceTree = "<group>"; };
-		A5F71EE02F604590000185C5 /* Controllers */ = {isa = PBXFileSystemSynchronizedRootGroup; explicitFileTypes = {}; explicitFolders = (); path = Controllers; sourceTree = "<group>"; };
-		A5F71EE42F60459D000185C5 /* Resources */ = {isa = PBXFileSystemSynchronizedRootGroup; exceptions = (A5F71EE62F60459D000185C5 /* PBXFileSystemSynchronizedBuildFileExceptionSet */, ); explicitFileTypes = {}; explicitFolders = (); path = Resources; sourceTree = "<group>"; };
-		A5F71EED2F6045A2000185C5 /* Views */ = {isa = PBXFileSystemSynchronizedRootGroup; explicitFileTypes = {}; explicitFolders = (); path = Views; sourceTree = "<group>"; };
-		A5F71F032F60468E000185C5 /* Facades */ = {isa = PBXFileSystemSynchronizedRootGroup; explicitFileTypes = {}; explicitFolders = (); path = Facades; sourceTree = "<group>"; };
-		A5F71F042F6046A4000185C5 /* Protocols */ = {isa = PBXFileSystemSynchronizedRootGroup; explicitFileTypes = {}; explicitFolders = (); path = Protocols; sourceTree = "<group>"; };
+		A5F71F262F604713000185C5 /* MirrorPad */ = {isa = PBXFileSystemSynchronizedRootGroup; exceptions = (A5F71F2E2F604713000185C5 /* PBXFileSystemSynchronizedBuildFileExceptionSet */, ); explicitFileTypes = {}; explicitFolders = (); path = MirrorPad; sourceTree = "<group>"; };
 /* End PBXFileSystemSynchronizedRootGroup section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -43,7 +43,7 @@
 		42F35C2920449C9A00584FAD = {
 			isa = PBXGroup;
 			children = (
-				42F35C3420449C9A00584FAD /* MirrorPad */,
+				A5F71F262F604713000185C5 /* MirrorPad */,
 				42F35C3320449C9A00584FAD /* Products */,
 			);
 			indentWidth = 2;
@@ -56,19 +56,6 @@
 				42F35C3220449C9A00584FAD /* MirrorPad.app */,
 			);
 			name = Products;
-			sourceTree = "<group>";
-		};
-		42F35C3420449C9A00584FAD /* MirrorPad */ = {
-			isa = PBXGroup;
-			children = (
-				A5F71EDD2F60458D000185C5 /* AppDelegate */,
-				A5F71EE02F604590000185C5 /* Controllers */,
-				A5F71F032F60468E000185C5 /* Facades */,
-				A5F71F042F6046A4000185C5 /* Protocols */,
-				A5F71EE42F60459D000185C5 /* Resources */,
-				A5F71EED2F6045A2000185C5 /* Views */,
-			);
-			path = MirrorPad;
 			sourceTree = "<group>";
 		};
 /* End PBXGroup section */
@@ -85,11 +72,6 @@
 			buildRules = (
 			);
 			dependencies = (
-			);
-			fileSystemSynchronizedGroups = (
-				A5F71EDD2F60458D000185C5 /* AppDelegate */,
-				A5F71EE02F604590000185C5 /* Controllers */,
-				A5F71EED2F6045A2000185C5 /* Views */,
 			);
 			name = MirrorPad;
 			productName = MirrorPad;
@@ -114,7 +96,6 @@
 				};
 			};
 			buildConfigurationList = 42F35C2D20449C9A00584FAD /* Build configuration list for PBXProject "MirrorPad" */;
-			compatibilityVersion = "Xcode 8.0";
 			developmentRegion = en;
 			hasScannedForEncodings = 0;
 			knownRegions = (
@@ -122,6 +103,7 @@
 				Base,
 			);
 			mainGroup = 42F35C2920449C9A00584FAD;
+			preferredProjectObjectVersion = 48;
 			productRefGroup = 42F35C3320449C9A00584FAD /* Products */;
 			projectDirPath = "";
 			projectRoot = "";
