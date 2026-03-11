@@ -1,4 +1,4 @@
-/// Copyright (c) 2019 Razeware LLC
+/// Copyright (c) 2026 Razeware LLC
 ///
 /// Permission is hereby granted, free of charge, to any person obtaining a copy
 /// of this software and associated documentation files (the "Software"), to deal
@@ -28,104 +28,78 @@
 
 import UIKit
 
-public class DrawView: UIView {
+public class AnimateState: DrawViewState {
 
-  // MARK: - Instance Properties
-  public let scaleX: CGFloat
-  public var scaleY: CGFloat
+  public override func animate() {
+    guard let sublayers = drawView.layer.sublayers,
+      sublayers.count > 0
+    else {
+      transitionToState(matching: AcceptInputState.identifier)
 
-  public var lineColor: UIColor = .black
-  public var lineWidth: CGFloat = 5.0
-  public var lines: [LineShape] = []
+      return
+    }
 
-  private func applyTransform() {
-    layer.sublayerTransform = CATransform3DMakeScale(scaleX, scaleY, 1)
-  }
-
-  // MARK: - Object Lifecycle
-
-  public init(scaleX: CGFloat, scaleY: CGFloat) {
-    self.scaleX = scaleX
-    self.scaleY = scaleY
-
-    super.init(frame: .zero)
-
-    applyTransform()
-  }
-  
-  required init?(coder: NSCoder) {
-    fatalError("init(coder:) has not been implemented")
-  }
-  
-  // MARK: - UIResponder
-  public override func touchesBegan(_ touches: Set<UITouch>, with event: UIEvent?) {
-    guard let point = touches.first?.location(in: self) else { return }
-    let line = LineShape(color: lineColor, width: lineWidth, startPoint: point)
-    lines.append(line)
-    layer.addSublayer(line)
-  }
-
-  public override func touchesMoved(_ touches: Set<UITouch>, with event: UIEvent?) {
-    guard let point = touches.first?.location(in: self),
-      bounds.contains(point),
-      let currentLine = lines.last else { return }
-    currentLine.addPoint(point)
-  }
-
-  // MARK: - Actions
-  public func animate() {
-    guard let sublayers = layer.sublayers, sublayers.count > 0 else { return }
     sublayers.forEach { $0.removeAllAnimations() }
-    UIView.animate(withDuration: 0.3) {
+
+    UIView.animate(withDuration: 0.3) { [weak self] in
+      guard let self else { return }
+
       CATransaction.begin()
+
+      CATransaction.setCompletionBlock {
+        self.transitionToState(matching: AcceptInputState.identifier)
+      }
+
       self.setSublayersStrokeEnd(to: 0.0)
       self.animateStrokeEnds(of: sublayers, at: 0)
+
       CATransaction.commit()
     }
   }
 
   private func setSublayersStrokeEnd(to value: CGFloat) {
-    layer.sublayers?.forEach {
+    drawView.layer.sublayers?.forEach {
       guard let shapeLayer = $0 as? CAShapeLayer else { return }
+
       shapeLayer.strokeEnd = 0.0
+
       let animation = CABasicAnimation(keyPath: "strokeEnd")
+
       animation.fromValue = value
       animation.toValue = value
       animation.fillMode = .forwards
+
       shapeLayer.add(animation, forKey: nil)
     }
   }
 
   private func animateStrokeEnds(of layers: [CALayer], at index: Int) {
     guard index < layers.count else { return }
+
     let currentLayer = layers[index]
+
     CATransaction.begin()
+
     CATransaction.setCompletionBlock { [weak self] in
       currentLayer.removeAllAnimations()
+
       self?.animateStrokeEnds(of: layers, at: index + 1)
     }
+
     if let shapeLayer = currentLayer as? CAShapeLayer {
       shapeLayer.strokeEnd = 1.0
+
       let animation = CABasicAnimation(keyPath: "strokeEnd")
+
       animation.duration = 1.0
       animation.fillMode = .forwards
       animation.fromValue = 0.0
       animation.toValue = 1.0
+
       shapeLayer.add(animation, forKey: nil)
     }
+
     CATransaction.commit()
   }
 
-  public func clear() {
-    lines = []
-    layer.sublayers?.removeAll()
-  }
-
-  public func copyLines(from source: DrawView) {
-    layer.sublayers?.removeAll()
-
-    lines = source.lines.deepCopy()
-    lines.forEach { layer.addSublayer($0) }
-  }
-  
 }

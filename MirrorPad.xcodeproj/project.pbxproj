@@ -19,8 +19,13 @@
 				Controllers/ViewController.swift,
 				Protocols/Copying.swift,
 				Resources/Assets.xcassets,
-				Views/DrawView.swift,
-				Views/LineShape.swift,
+				Views/DrawView/DrawView.swift,
+				Views/DrawView/LineShape.swift,
+				Views/DrawView/States/AcceptInputState.swift,
+				Views/DrawView/States/AnimateState.swift,
+				Views/DrawView/States/ClearState.swift,
+				Views/DrawView/States/CopyState.swift,
+				Views/DrawView/States/DrawViewState.swift,
 			);
 			target = 42F35C3120449C9A00584FAD /* MirrorPad */;
 		};
