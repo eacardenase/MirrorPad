@@ -36,6 +36,17 @@ public class ViewController: UIViewController {
   public let topRightDrawView = DrawView(scaleX: -1, scaleY: 1)
   public let bottomLeftDrawView = DrawView(scaleX: 1, scaleY: -1)
   public let bottomRightDrawView = DrawView(scaleX: -1, scaleY: -1)
+
+  private let drawViewContainer: UIStackView = {
+    let container = UIStackView()
+
+    container.translatesAutoresizingMaskIntoConstraints = false
+    container.axis = .vertical
+    container.distribution = .fillEqually
+
+    return container
+  }()
+
   public let horizontalDivider: UIView = {
     let view = UIView()
 
@@ -149,32 +160,27 @@ extension ViewController {
     bottomStackView.axis = .horizontal
     bottomStackView.distribution = .fillEqually
 
-    let containerStackView = UIStackView(arrangedSubviews: [
-      topStackView, bottomStackView,
-    ])
+    drawViewContainer.addArrangedSubview(topStackView)
+    drawViewContainer.addArrangedSubview(bottomStackView)
 
-    containerStackView.translatesAutoresizingMaskIntoConstraints = false
-    containerStackView.axis = .vertical
-    containerStackView.distribution = .fillEqually
-
-    view.addSubview(containerStackView)
+    view.addSubview(drawViewContainer)
     view.addSubview(horizontalDivider)
     view.addSubview(verticalDivider)
 
     // containerStackView
-    let containerStackBottomAnchor = containerStackView.bottomAnchor.constraint(
+    let containerStackBottomAnchor = drawViewContainer.bottomAnchor.constraint(
       equalTo: view.safeAreaLayoutGuide.bottomAnchor
     )
     containerStackBottomAnchor.priority = UILayoutPriority(900)
 
     NSLayoutConstraint.activate([
-      containerStackView.topAnchor.constraint(
+      drawViewContainer.topAnchor.constraint(
         equalTo: view.safeAreaLayoutGuide.topAnchor
       ),
-      containerStackView.leadingAnchor.constraint(
+      drawViewContainer.leadingAnchor.constraint(
         equalTo: view.safeAreaLayoutGuide.leadingAnchor
       ),
-      containerStackView.trailingAnchor.constraint(
+      drawViewContainer.trailingAnchor.constraint(
         equalTo: view.safeAreaLayoutGuide.trailingAnchor
       ),
       containerStackBottomAnchor,
@@ -186,10 +192,10 @@ extension ViewController {
         equalTo: view.safeAreaLayoutGuide.centerYAnchor
       ),
       horizontalDivider.leadingAnchor.constraint(
-        equalTo: containerStackView.leadingAnchor
+        equalTo: drawViewContainer.leadingAnchor
       ),
       horizontalDivider.trailingAnchor.constraint(
-        equalTo: containerStackView.trailingAnchor
+        equalTo: drawViewContainer.trailingAnchor
       ),
       horizontalDivider.heightAnchor.constraint(equalToConstant: 2),
     ])
@@ -200,10 +206,10 @@ extension ViewController {
         equalTo: view.centerXAnchor
       ),
       verticalDivider.topAnchor.constraint(
-        equalTo: containerStackView.topAnchor
+        equalTo: drawViewContainer.topAnchor
       ),
       verticalDivider.bottomAnchor.constraint(
-        equalTo: containerStackView.bottomAnchor
+        equalTo: drawViewContainer.bottomAnchor
       ),
       verticalDivider.widthAnchor.constraint(equalToConstant: 2),
     ])
