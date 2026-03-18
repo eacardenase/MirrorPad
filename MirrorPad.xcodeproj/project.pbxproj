@@ -18,6 +18,7 @@
 				AppDelegate/AppDelegate.swift,
 				Controllers/ViewController.swift,
 				Protocols/Copying.swift,
+				Protocols/MulticastDelegate.swift,
 				Resources/Assets.xcassets,
 				Views/DrawView/DrawView.swift,
 				Views/DrawView/LineShape.swift,

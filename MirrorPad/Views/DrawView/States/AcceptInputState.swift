@@ -60,20 +60,53 @@ public class AcceptInputState: DrawViewState {
       startPoint: point
     )
 
-    drawView.lines.append(line)
-    drawView.layer.addSublayer(line)
+    addLine(line)
+
+    drawView.multicastDelegate.invokeDelegates {
+      $0.drawView(drawView, didAddLine: line)
+    }
   }
 
   public override func touchesMoved(
     _ touches: Set<UITouch>,
     with event: UIEvent?
   ) {
-    guard let point = touches.first?.location(in: drawView),
-      drawView.bounds.contains(point),
-      let currentLine = drawView.lines.last
-    else { return }
+    guard let point = touches.first?.location(in: drawView) else { return }
 
-    currentLine.addPoint(point)
+    addPoint(point)
+
+    drawView.multicastDelegate.invokeDelegates {
+      $0.drawView(drawView, didAddPoint: point)
+    }
   }
 
+  private func addLine(_ line: LineShape) {
+    drawView.lines.append(line)
+    drawView.layer.addSublayer(line)
+  }
+
+  private func addPoint(_ point: CGPoint) {
+    drawView.lines.last?.addPoint(point)
+  }
+
+}
+
+// MARK: - DrawViewDelegate
+
+extension AcceptInputState {
+  public override func drawView(
+    _ source: DrawView,
+    didAddLine line: LineShape
+  ) {
+    let newLine = line.copy() as LineShape
+
+    addLine(newLine)
+  }
+
+  public override func drawView(
+    _ source: DrawView,
+    didAddPoint point: CGPoint
+  ) {
+    addPoint(point)
+  }
 }

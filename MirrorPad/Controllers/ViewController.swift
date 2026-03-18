@@ -90,6 +90,11 @@ public class ViewController: UIViewController {
     navigationController?.navigationBar.isHidden = true
     navigationController?.isToolbarHidden = false
 
+    mirrorDrawViews.forEach {
+      $0.isUserInteractionEnabled = false
+      inputDrawView.addDelegate($0)
+    }
+
     setupViews()
 
     toolbarItems = [
@@ -172,7 +177,7 @@ extension ViewController {
       containerStackView.trailingAnchor.constraint(
         equalTo: view.safeAreaLayoutGuide.trailingAnchor
       ),
-      containerStackBottomAnchor
+      containerStackBottomAnchor,
     ])
 
     // horizontalDivider

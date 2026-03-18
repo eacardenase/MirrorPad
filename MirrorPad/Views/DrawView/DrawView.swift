@@ -28,15 +28,22 @@
 
 import UIKit
 
-public class DrawView: UIView {
+@objc public protocol DrawViewDelegate: AnyObject {
+  func drawView(_ source: DrawView, didAddLine line: LineShape)
+  func drawView(_ source: DrawView, didAddPoint point: CGPoint)
+}
 
-  // MARK: - Instance Properties
+public class DrawView: UIView {
+  // MARK: - Properties
+
   public let scaleX: CGFloat
   public var scaleY: CGFloat
 
   public var lineColor: UIColor = .black
   public var lineWidth: CGFloat = 5.0
   public var lines: [LineShape] = []
+
+  public let multicastDelegate = MulticastDelegate<DrawViewDelegate>()
 
   public lazy var states = [
     AcceptInputState.identifier: AcceptInputState(drawView: self),
@@ -46,10 +53,6 @@ public class DrawView: UIView {
   ]
 
   public lazy var currentState = states[AcceptInputState.identifier]!
-
-  private func applyTransform() {
-    layer.sublayerTransform = CATransform3DMakeScale(scaleX, scaleY, 1)
-  }
 
   // MARK: - Object Lifecycle
 
@@ -81,7 +84,14 @@ public class DrawView: UIView {
     currentState.touchesMoved(touches, with: event)
   }
 
+  // MARK: - Helpers
+
+  private func applyTransform() {
+    layer.sublayerTransform = CATransform3DMakeScale(scaleX, scaleY, 1)
+  }
+
   // MARK: - Actions
+
   public func animate() {
     currentState.animate()
   }
@@ -94,4 +104,25 @@ public class DrawView: UIView {
     currentState.copyLines(from: source)
   }
 
+  // MARK: - Delegate Management
+
+  public func addDelegate(_ delegate: DrawViewDelegate) {
+    multicastDelegate.add(delegate)
+  }
+
+  public func removeDelegate(_ delegate: DrawViewDelegate) {
+    multicastDelegate.remove(delegate)
+  }
+}
+
+// MARK: - DrawViewDelegate
+
+extension DrawView: DrawViewDelegate {
+  public func drawView(_ source: DrawView, didAddLine line: LineShape) {
+    currentState.drawView(self, didAddLine: line)
+  }
+
+  public func drawView(_ source: DrawView, didAddPoint point: CGPoint) {
+    currentState.drawView(self, didAddPoint: point)
+  }
 }

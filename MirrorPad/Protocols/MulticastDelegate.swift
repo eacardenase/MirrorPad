@@ -1,15 +1,15 @@
 /// Copyright (c) 2026 Razeware LLC
-///
+/// 
 /// Permission is hereby granted, free of charge, to any person obtaining a copy
 /// of this software and associated documentation files (the "Software"), to deal
 /// in the Software without restriction, including without limitation the rights
 /// to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
 /// copies of the Software, and to permit persons to whom the Software is
 /// furnished to do so, subject to the following conditions:
-///
+/// 
 /// The above copyright notice and this permission notice shall be included in
 /// all copies or substantial portions of the Software.
-///
+/// 
 /// Notwithstanding the foregoing, you may not use, copy, modify, merge, publish,
 /// distribute, sublicense, create a derivative work, and/or sell copies of the
 /// Software in any work that is designed, intended, or marketed for pedagogical or
@@ -17,7 +17,7 @@
 /// or information technology.  Permission for such use, copying, modification,
 /// merger, publication, distribution, sublicensing, creation of derivative works,
 /// or sale is expressly withheld.
-///
+/// 
 /// THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
 /// IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
 /// FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
@@ -26,51 +26,49 @@
 /// OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 /// THE SOFTWARE.
 
-import UIKit
+import Foundation
 
-public class DrawViewState {
-
-  // MARK: - Class Properties
-
-  public class var identifier: AnyHashable {
-    return ObjectIdentifier(self)
+public class MulticastDelegate<ProtocolType> {
+  // MARK: - DelegateWrapper
+  
+  private class DelegateWrapper {
+    weak var delegate: AnyObject?
+    
+    init(_ delegate: AnyObject) {
+      self.delegate = delegate
+    }
   }
-
-  // MARK: - Instance Properties
-
-  public unowned let drawView: DrawView
-
+  
+  // MARK: - Properties
+  
+  private var delegateWrappers: [DelegateWrapper]
+  public var delegates: [ProtocolType] {
+    return delegateWrappers.compactMap { $0.delegate as? ProtocolType }
+  }
+  
   // MARK: - Object Lifecycle
-
-  public init(drawView: DrawView) {
-    self.drawView = drawView
+  
+  public init(delegates: [ProtocolType] = []) {
+    delegateWrappers = delegates.map { DelegateWrapper($0 as AnyObject) }
   }
-
-  // MARK: - Actions
-
-  public func animate() {}
-  public func copyLines(from source: DrawView) {}
-  public func clear() {}
-  public func touchesBegan(_ touches: Set<UITouch>, with event: UIEvent?) {}
-  public func touchesMoved(_ touches: Set<UITouch>, with event: UIEvent?) {}
-
-  // MARK: - State Management
-
-  @discardableResult internal func transitionToState(
-    matching identifier: AnyHashable
-  ) -> DrawViewState {
-    let state = drawView.states[identifier]!
-
-    drawView.currentState = state
-
-    return state
+  
+  // MARK: - Delegate Management
+  
+  public func add(_ delegate: ProtocolType) {
+    delegateWrappers = delegateWrappers.compactMap { $0 }
+    
+    delegateWrappers.append(DelegateWrapper(delegate as AnyObject))
   }
-
-}
-
-// MARK: - DrawViewDelegate
-
-extension DrawViewState: DrawViewDelegate {
-  public func drawView(_ source: DrawView, didAddLine line: LineShape) {}
-  public func drawView(_ source: DrawView, didAddPoint point: CGPoint) {}
+  
+  public func remove(_ delegate: ProtocolType) {
+    if let index = delegateWrappers.firstIndex(where: {
+      $0.delegate === (delegate as AnyObject)
+    }) {
+      delegateWrappers.remove(at: index)
+    }
+  }
+  
+  public func invokeDelegates(_ closure: (ProtocolType) -> Void) {
+    delegates.forEach { closure($0) }
+  }
 }
