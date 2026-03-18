@@ -28,13 +28,62 @@
 
 import UIKit
 
-public class ImageRenderer {
-  public func convertViewToImage(_ view: UIView) -> UIImage {
-    UIGraphicsBeginImageContextWithOptions(view.bounds.size, view.isOpaque, 0.0)
-    let context = UIGraphicsGetCurrentContext()!
-    view.layer.render(in: context)
-    let image = UIGraphicsGetImageFromCurrentImageContext()!
-    UIGraphicsEndImageContext()
-    return image
+public class ShareFacade {
+  // MARK: - Instance Properties
+
+  public var entireDrawing: UIView
+  public var inputDrawing: UIView
+  public var parentViewController: UIViewController
+
+  private var imageRenderer = ImageRenderer()
+
+  // MARK: - Object Lifecycle
+
+  init(
+    entireDrawing: UIView,
+    inputDrawing: UIView,
+    parentViewController: UIViewController
+  ) {
+    self.entireDrawing = entireDrawing
+    self.inputDrawing = inputDrawing
+    self.parentViewController = parentViewController
+  }
+
+  // MARK: - Facade Methods
+
+  public func presentShareController() {
+    let selectionViewController = DrawingSelectionViewController(
+      entireDrawing: entireDrawing,
+      inputDrawing: inputDrawing,
+      delegate: self
+    )
+
+    parentViewController.present(selectionViewController, animated: true)
+  }
+}
+
+// MARK: - DrawingSelectionViewControllerDelegate
+
+extension ShareFacade: DrawingSelectionViewControllerDelegate {
+  public func drawingSelectionViewControllerDidCancel(
+    _ viewController: DrawingSelectionViewController
+  ) {
+    parentViewController.dismiss(animated: true)
+  }
+
+  public func drawingSelectionViewController(
+    _ viewController: DrawingSelectionViewController,
+    didSelectView view: UIView
+  ) {
+    parentViewController.dismiss(animated: false)
+
+    let image = imageRenderer.convertViewToImage(view)
+
+    let activityController = UIActivityViewController(
+      activityItems: [image],
+      applicationActivities: nil
+    )
+
+    parentViewController.present(activityController, animated: true)
   }
 }

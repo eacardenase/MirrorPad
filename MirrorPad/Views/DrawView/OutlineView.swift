@@ -50,13 +50,8 @@ public class OutlineView: UIView {
     configureLayerProperties()
   }
 
-  public required init?(coder aDecoder: NSCoder) {
-    super.init(coder: aDecoder)
-    configureLayerProperties()
-  }
-
-  public override func prepareForInterfaceBuilder() {
-    configureLayerProperties()
+  required init?(coder: NSCoder) {
+    fatalError("init(coder:) has not been implemented")
   }
 
   private func configureLayerProperties() {

@@ -40,41 +40,70 @@ public protocol DrawingSelectionViewControllerDelegate: AnyObject {
 }
 
 public final class DrawingSelectionViewController: UIViewController {
-  // MARK: - Constructors
-
-  public class func createInstance(
-    entireDrawing: UIView,
-    inputDrawing: UIView,
-    delegate: DrawingSelectionViewControllerDelegate
-  ) -> DrawingSelectionViewController {
-
-    let viewController = DrawingSelectionViewController()
-
-    viewController.modalPresentationStyle = .overCurrentContext
-    viewController.modalTransitionStyle = .crossDissolve
-
-    viewController.entireDrawing = entireDrawing
-    viewController.inputDrawing = inputDrawing
-    viewController.selectedDrawing = inputDrawing
-    viewController.delegate = delegate
-
-    return viewController
-  }
-
-  // MARK: - Instance Properties
+  // MARK: - Properties
 
   public var delegate: DrawingSelectionViewControllerDelegate?
 
-  private var entireDrawing: UIView!
-  private var inputDrawing: UIView!
-  private var selectedDrawing: UIView!
+  private var entireDrawing: UIView
+  private var inputDrawing: UIView
+  private var selectedDrawing: UIView
 
-  // MARK: - Outlets
-
-  lazy var expandContractButton: UIButton = {
+  private lazy var cancelButton: UIButton = {
     let button = UIButton(type: .system)
 
-    button.setImage(UIImage(resource: .expandArrows), for: .normal)
+    button.translatesAutoresizingMaskIntoConstraints = false
+    button.setTitle("Cancel", for: .normal)
+    button.tintColor = .white
+    button.backgroundColor = .systemGray
+    button.addTarget(
+      self,
+      action: #selector(cancelButtonTapped),
+      for: .touchUpInside
+    )
+
+    button.layer.cornerRadius = 8
+    button.contentEdgeInsets = UIEdgeInsets(
+      top: 8,
+      left: 16,
+      bottom: 8,
+      right: 16
+    )
+
+    return button
+  }()
+
+  private lazy var shareButton: UIButton = {
+    let button = UIButton(type: .system)
+
+    button.translatesAutoresizingMaskIntoConstraints = false
+    button.setTitle("Share", for: .normal)
+    button.tintColor = .white
+    button.backgroundColor = .systemRed
+    button.addTarget(
+      self,
+      action: #selector(shareButtonTapped),
+      for: .touchUpInside
+    )
+
+    button.layer.cornerRadius = 8
+    button.contentEdgeInsets = UIEdgeInsets(
+      top: 8,
+      left: 16,
+      bottom: 8,
+      right: 16
+    )
+
+    return button
+  }()
+
+  private lazy var expandContractButton: UIButton = {
+    let button = UIButton(type: .system)
+    let image = UIImage(resource: .expandArrows).withRenderingMode(
+      .alwaysOriginal
+    )
+
+    button.translatesAutoresizingMaskIntoConstraints = false
+    button.setImage(image, for: .normal)
     button.addTarget(
       self,
       action: #selector(expandContractButtonTapped),
@@ -84,21 +113,60 @@ public final class DrawingSelectionViewController: UIViewController {
     return button
   }()
 
+  // MARK: - Object Lifecycle
+
+  public init(
+    entireDrawing: UIView,
+    inputDrawing: UIView,
+    delegate: DrawingSelectionViewControllerDelegate
+  ) {
+    self.entireDrawing = entireDrawing
+    self.inputDrawing = inputDrawing
+    self.selectedDrawing = inputDrawing
+    self.delegate = delegate
+
+    super.init(nibName: nil, bundle: nil)
+
+    modalPresentationStyle = .overCurrentContext
+    modalTransitionStyle = .crossDissolve
+  }
+
+  required init?(coder: NSCoder) {
+    fatalError("init(coder:) has not been implemented")
+  }
+
   // MARK: - View Lifecycle
+
+  public override func loadView() {
+    view = OutlineView()
+
+    setupViews()
+  }
 
   public override func viewDidLayoutSubviews() {
     super.viewDidLayoutSubviews()
 
-    view.frame = selectedDrawing.frame
+    var selectedFrame = selectedDrawing.frame
+
+    if selectedDrawing === inputDrawing {
+      selectedFrame = selectedDrawing.convert(
+        selectedDrawing.frame,
+        to: entireDrawing.superview
+      )
+    }
+
+    view.frame = selectedFrame
   }
 
   // MARK: - Actions
 
-  @IBAction internal func cancelPressed(_ sender: Any) {
+  @objc func cancelButtonTapped(_ sender: UIButton) {
     delegate?.drawingSelectionViewControllerDidCancel(self)
   }
 
-  @IBAction internal func sharePressed(_ sender: Any) {
+  @objc func shareButtonTapped(_ sender: UIButton) {
+    print(selectedDrawing)
+
     delegate?.drawingSelectionViewController(
       self,
       didSelectView: selectedDrawing
@@ -120,6 +188,7 @@ public final class DrawingSelectionViewController: UIViewController {
 
   private func animateViewBounds() {
     let newBounds = selectedDrawing.bounds
+
     UIView.animateKeyframes(
       withDuration: 0.33,
       delay: 0.0,
@@ -139,5 +208,39 @@ public final class DrawingSelectionViewController: UIViewController {
     } else {
       expandContractButton.transform = CGAffineTransform(rotationAngle: .pi)
     }
+  }
+}
+
+// MARK: - Helpers
+
+extension DrawingSelectionViewController {
+  private func setupViews() {
+
+    let stackView = UIStackView(arrangedSubviews: [cancelButton, shareButton])
+
+    stackView.translatesAutoresizingMaskIntoConstraints = false
+    stackView.axis = .horizontal
+    stackView.spacing = 24
+
+    view.addSubview(stackView)
+    view.addSubview(expandContractButton)
+
+    // stackView
+    NSLayoutConstraint.activate([
+      stackView.centerXAnchor.constraint(equalTo: view.centerXAnchor),
+      stackView.centerYAnchor.constraint(equalTo: view.centerYAnchor),
+    ])
+
+    // expandContractButton
+    NSLayoutConstraint.activate([
+      expandContractButton.trailingAnchor.constraint(
+        equalTo: view.safeAreaLayoutGuide.trailingAnchor,
+        constant: -8
+      ),
+      expandContractButton.bottomAnchor.constraint(
+        equalTo: view.safeAreaLayoutGuide.bottomAnchor,
+        constant: -8
+      ),
+    ])
   }
 }

@@ -36,7 +36,6 @@ public class ViewController: UIViewController {
   public let topRightDrawView = DrawView(scaleX: -1, scaleY: 1)
   public let bottomLeftDrawView = DrawView(scaleX: 1, scaleY: -1)
   public let bottomRightDrawView = DrawView(scaleX: -1, scaleY: -1)
-
   private let drawViewContainer: UIStackView = {
     let container = UIStackView()
 
@@ -46,6 +45,12 @@ public class ViewController: UIViewController {
 
     return container
   }()
+
+  public lazy var shareFacade = ShareFacade(
+    entireDrawing: drawViewContainer,
+    inputDrawing: inputDrawView,
+    parentViewController: self
+  )
 
   public let horizontalDivider: UIView = {
     let view = UIView()
@@ -133,7 +138,7 @@ public class ViewController: UIViewController {
   }
 
   @objc public func sharePressed(_ sender: UIBarButtonItem) {
-    print(#function)
+    shareFacade.presentShareController()
   }
 }
 
