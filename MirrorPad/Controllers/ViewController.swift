@@ -147,7 +147,7 @@ public class ViewController: UIViewController {
 extension ViewController {
 
   private func setupViews() {
-    view.backgroundColor = .systemBackground
+    view.backgroundColor = .white
 
     let topStackView = UIStackView(arrangedSubviews: [
       inputDrawView, topRightDrawView,

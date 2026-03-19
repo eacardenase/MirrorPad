@@ -165,8 +165,6 @@ public final class DrawingSelectionViewController: UIViewController {
   }
 
   @objc func shareButtonTapped(_ sender: UIButton) {
-    print(selectedDrawing)
-
     delegate?.drawingSelectionViewController(
       self,
       didSelectView: selectedDrawing

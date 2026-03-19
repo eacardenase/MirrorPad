@@ -61,6 +61,7 @@ public class DrawView: UIView {
     self.scaleY = scaleY
 
     super.init(frame: .zero)
+    backgroundColor = .white
 
     applyTransform()
   }
